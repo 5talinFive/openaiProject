@@ -9,3 +9,4 @@ venv/
 
 # Archivos de configuración
 credentials.json
+.env
