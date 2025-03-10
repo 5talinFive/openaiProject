@@ -36,6 +36,9 @@ def get_response():
     # Añadir el mensaje del usuario al historial
     session['messages'].append({"role": "user", "content": user_input})
     
+    # Inicializar la variable messages
+    messages = session['messages'].copy()
+    
     # Verificar si la entrada del usuario contiene "colegio rafael galeth"
     if "colegio rafael galeth" in user_input.lower():
         # Leer datos de la Google Sheet
@@ -44,11 +47,8 @@ def get_response():
         # Convertir los datos a una cadena JSON
         external_data = json.dumps(data)
         
-        # Crear el mensaje para OpenAI incluyendo los datos externos
-        messages = session['messages'] + [{"role": "user", "content": f"External Data: {external_data}"}]
-    else:
-        # Crear el mensaje para OpenAI sin los datos externos
-        messages = session['messages']
+        # Crear el mensaje para OpenAI incluyendo los datos externos como contexto
+        messages.append({"role": "system", "content": f"External Data: {external_data}"})
     
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
