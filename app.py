@@ -62,12 +62,13 @@ def get_response():
         # Crear el mensaje para OpenAI incluyendo los datos externos como contexto
         messages.append({"role": "system", "content": f"External Data: {external_data}"})
     
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=messages,
+        max_tokens=150
     )
     
-    response_text = response.choices[0].message['content'].strip()
+    response_text = response.choices[0].text.strip()
     
     # Añadir la respuesta del asistente al historial
     session['messages'].append({"role": "assistant", "content": response_text})
