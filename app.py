@@ -15,10 +15,22 @@ app.secret_key = 'your_secret_key'  # Cambia esto a una clave secreta segura
 # Configura la clave de API para autenticar las solicitudes a OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Configurar las credenciales de Google Sheets
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-client = gspread.authorize(creds)
+# Configurar las credenciales de Google Sheets usando variables de entorno
+credentials_dict = {
+    "type": os.getenv("GOOGLE_TYPE"),
+    "project_id": os.getenv("GOOGLE_PROJECT_ID"),
+    "private_key_id": os.getenv("GOOGLE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("GOOGLE_PRIVATE_KEY").replace('\\n', '\n'),
+    "client_email": os.getenv("GOOGLE_CLIENT_EMAIL"),
+    "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+    "auth_uri": os.getenv("GOOGLE_AUTH_URI"),
+    "token_uri": os.getenv("GOOGLE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("GOOGLE_AUTH_PROVIDER_X509_CERT_URL"),
+    "client_x509_cert_url": os.getenv("GOOGLE_CLIENT_X509_CERT_URL")
+}
+
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(credentials_dict)
+client = gspread.authorize(credentials)
 
 # Abrir la hoja de cálculo y seleccionar la hoja
 sheet = client.open("DB_OPENAI").sheet1
